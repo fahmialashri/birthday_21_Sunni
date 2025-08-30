@@ -24,6 +24,8 @@
       .container {
         text-align: center;
         position: relative;
+        width: 100%;
+        max-width: 600px;
       }
 
       .title {
@@ -104,8 +106,8 @@
         top: -220px;
         left: 50%;
         transform: translateX(-50%) scale(0);
-        width: 500px; /* Diperbesar dari 400px */
-        height: 400px; /* Diperbesar dari 300px */
+        width: 500px;
+        height: 400px;
         background: linear-gradient(
           135deg,
           #ff9a9e 0%,
@@ -123,7 +125,7 @@
         opacity: 0;
         transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         z-index: 10;
-        padding: 2.5rem; /* Diperbesar dari 2rem */
+        padding: 2.5rem;
       }
 
       .greeting-card.show {
@@ -132,9 +134,9 @@
       }
 
       .card-title {
-        font-size: 2.5rem; /* Diperbesar dari 2rem */
+        font-size: 2.5rem;
         font-weight: bold;
-        margin-bottom: 2rem; /* Diperbesar dari 1.5rem */
+        margin-bottom: 2rem;
         color: #d63384;
         opacity: 0;
         animation: fadeInText 0.5s ease-out forwards;
@@ -142,12 +144,12 @@
       }
 
       .typing-text {
-        font-size: 1.1rem; /* Diperbesar dari 1rem */
+        font-size: 1.1rem;
         text-align: center;
         line-height: 1.6;
-        margin-bottom: 2rem; /* Diperbesar dari 1.5rem */
-        padding: 0 1.5rem; /* Diperbesar dari 1rem */
-        min-height: 150px; /* Diperbesar dari 120px */
+        margin-bottom: 2rem;
+        padding: 0 1.5rem;
+        min-height: 150px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -169,9 +171,9 @@
         background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
         color: white;
         border: none;
-        padding: 15px 30px; /* Diperbesar dari 12px 24px */
-        border-radius: 30px; /* Diperbesar dari 25px */
-        font-size: 1.1rem; /* Diperbesar dari 1rem */
+        padding: 15px 30px;
+        border-radius: 30px;
+        font-size: 1.1rem;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -373,6 +375,85 @@
         pointer-events: none;
       }
 
+      /* Photo display styles */
+      .photo-display {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.8s ease;
+      }
+
+      .photo-display.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .photo-container {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+        text-align: center;
+      }
+
+      .photo-image {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: photoZoomIn 1s ease-out;
+      }
+
+      .photo-close {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      }
+
+      .photo-close:hover {
+        background: #ff5252;
+        transform: scale(1.1);
+      }
+
+      .photo-message {
+        color: white;
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        text-align: center;
+        opacity: 0;
+        animation: fadeInText 0.5s ease-out forwards;
+        animation-delay: 1s;
+      }
+
+      @keyframes photoZoomIn {
+        from {
+          opacity: 0;
+          transform: scale(0.3);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
       .particles {
         position: absolute;
         width: 100%;
@@ -523,6 +604,131 @@
           opacity: 0;
         }
       }
+
+      /* MEDIA QUERIES FOR RESPONSIVENESS */
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+          justify-content: flex-start;
+          padding-top: 5rem;
+        }
+
+        .container {
+          padding: 0 1rem;
+        }
+
+        .title {
+          font-size: 1.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .envelope {
+          width: 200px;
+          height: 140px;
+        }
+
+        .envelope-body {
+          width: 200px;
+          height: 140px;
+        }
+
+        .envelope-flap {
+          border-left: 100px solid transparent;
+          border-right: 100px solid transparent;
+          border-bottom: 70px solid #e8e8e8;
+          top: -67px;
+        }
+
+        .envelope-flap::before {
+          border-left: 100px solid transparent;
+          border-right: 100px solid transparent;
+          border-top: 70px solid #ddd;
+          top: 70px;
+          left: -100px;
+        }
+
+        .open-text {
+          font-size: 1rem;
+          margin-top: 1rem;
+        }
+
+        .greeting-card {
+          width: 90%;
+          height: auto;
+          top: -150px;
+          padding: 1.5rem;
+        }
+
+        .card-title {
+          font-size: 1.8rem;
+          margin-bottom: 1rem;
+        }
+
+        .typing-text {
+          font-size: 0.9rem;
+          min-height: 100px;
+          margin-bottom: 1rem;
+        }
+
+        .continue-btn {
+          padding: 12px 24px;
+          font-size: 1rem;
+        }
+
+        .scratch-card {
+          width: 80%;
+          height: auto;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%) scale(0) rotate(0deg) !important;
+          margin-bottom: 2rem;
+        }
+
+        .scratch-card.show {
+          position: relative;
+          transform: translateX(-50%) scale(1) rotate(0deg) !important;
+        }
+
+        .scratch-card:nth-child(4) {
+          left: 50%;
+          top: 0;
+        }
+
+        .scratch-card:nth-child(5) {
+          left: 50%;
+          top: 0;
+        }
+
+        .scratch-area {
+          width: 90%;
+          height: 80px;
+        }
+
+        .instruction {
+          font-size: 0.7rem;
+        }
+
+        .prize-title {
+          font-size: 1rem;
+        }
+
+        .prize-item {
+          font-size: 0.8rem;
+        }
+
+        .whatsapp-btn {
+          font-size: 0.75rem;
+          padding: 6px 12px;
+        }
+
+        .photo-close {
+          top: -20px;
+          right: 20px;
+          width: 30px;
+          height: 30px;
+          font-size: 1rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -538,7 +744,6 @@
         <div class="envelope-body"></div>
         <div class="envelope-flap"></div>
 
-        <!-- Greeting Card -->
         <div class="greeting-card" id="greetingCard">
           <div class="card-title">21 Sunni Birthday</div>
           <div class="typing-text" id="typingText">
@@ -549,7 +754,6 @@
           </button>
         </div>
 
-        <!-- Scratch Card 1 - Jaket Uniqlo -->
         <div class="scratch-card" id="scratchCard1">
           <div class="instruction">
             Gosok area di bawah untuk melihat hadiah!
@@ -578,7 +782,6 @@
           </div>
         </div>
 
-        <!-- Scratch Card 2 - Lunch Osteria Gia -->
         <div class="scratch-card" id="scratchCard2">
           <div class="instruction">
             Gosok area di bawah untuk melihat hadiah!
@@ -609,6 +812,13 @@
       </div>
 
       <div class="open-text" id="openText">Klik Untuk Membuka Amplop</div>
+    </div>
+
+    <div class="photo-display" id="photoDisplay">
+      <div class="photo-container">
+        <button class="photo-close" onclick="hidePhoto()">×</button>
+        <img src="sunni.png" alt="Foto Spesial" class="photo-image" />
+      </div>
     </div>
 
     <script>
@@ -651,6 +861,68 @@
         document.getElementById(
           "stepText"
         ).textContent = `Step ${step}: ${text}`;
+      }
+
+      // Check if all vouchers are revealed
+      function checkAllVouchersRevealed() {
+        const allRevealed = Object.values(scratchStates).every(
+          (state) => state.isRevealed
+        );
+
+        if (allRevealed) {
+          setTimeout(() => {
+            showPhoto();
+          }, 1000);
+        }
+      }
+
+      // Show photo when all vouchers are revealed
+      function showPhoto() {
+        const photoDisplay = document.getElementById("photoDisplay");
+        photoDisplay.classList.add("show");
+        updateStep(5, "Lihat Foto Spesial");
+
+        // Create extra celebration effect
+        createFinalCelebration();
+      }
+
+      // Hide photo
+      function hidePhoto() {
+        const photoDisplay = document.getElementById("photoDisplay");
+        photoDisplay.classList.remove("show");
+      }
+
+      // Create final celebration effect
+      function createFinalCelebration() {
+        const container = document.querySelector("body");
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement("div");
+          confetti.style.position = "fixed";
+          confetti.style.width = "12px";
+          confetti.style.height = "12px";
+          confetti.style.background = [
+            "#ff6b6b",
+            "#4ecdc4",
+            "#45b7d1",
+            "#ffd700",
+            "#ff8e8e",
+            "#ff69b4",
+            "#00d4ff",
+            "#ff9a9e",
+          ][Math.floor(Math.random() * 8)];
+          confetti.style.left = Math.random() * 100 + "%";
+          confetti.style.top = "0%";
+          confetti.style.opacity = "1";
+          confetti.style.animation = `sparkle ${
+            2 + Math.random() * 2
+          }s ease-out forwards`;
+          confetti.style.zIndex = "999";
+          container.appendChild(confetti);
+
+          setTimeout(() => {
+            confetti.remove();
+          }, 4000);
+        }
       }
 
       // Typing animation function
@@ -810,6 +1082,9 @@
         createScratchCelebration(scratchCard);
 
         updateStep(4, "Klaim Hadiah via WhatsApp");
+
+        // Check if all vouchers are revealed
+        checkAllVouchersRevealed();
       }
 
       function createScratchCelebration(card) {
@@ -840,7 +1115,6 @@
         }
       }
 
-      // Create celebration effect
       function createCelebrationEffect() {
         const container = document.querySelector(".container");
         for (let i = 0; i < 20; i++) {
