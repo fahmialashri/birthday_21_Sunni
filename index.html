@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voucher - Sunni</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .container {
+        text-align: center;
+        position: relative;
+      }
+
+      .title {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        animation: fadeInDown 1s ease-out forwards;
+      }
+
+      .envelope {
+        position: relative;
+        width: 250px;
+        height: 175px;
+        margin: 0 auto;
+        cursor: pointer;
+        transform: scale(1);
+        transition: transform 0.3s ease;
+      }
+
+      .envelope:hover {
+        transform: scale(1.05);
+      }
+
+      .envelope-body {
+        width: 250px;
+        height: 175px;
+        background: #f4f4f4;
+        border: 3px solid #ddd;
+        border-radius: 12px;
+        position: relative;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .envelope-flap {
+        width: 0;
+        height: 0;
+        border-left: 125px solid transparent;
+        border-right: 125px solid transparent;
+        border-bottom: 90px solid #e8e8e8;
+        position: absolute;
+        top: -87px;
+        left: 0;
+        transform-origin: bottom center;
+        transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 2;
+      }
+
+      .envelope-flap::before {
+        content: "";
+        position: absolute;
+        top: 90px;
+        left: -125px;
+        width: 0;
+        height: 0;
+        border-left: 125px solid transparent;
+        border-right: 125px solid transparent;
+        border-top: 90px solid #ddd;
+      }
+
+      .envelope.opened .envelope-flap {
+        transform: rotateX(180deg);
+      }
+
+      .open-text {
+        color: white;
+        font-size: 1.2rem;
+        margin-top: 1.5rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      /* Greeting Card Styles */
+      .greeting-card {
+        position: absolute;
+        top: -220px;
+        left: 50%;
+        transform: translateX(-50%) scale(0);
+        width: 500px; /* Diperbesar dari 400px */
+        height: 400px; /* Diperbesar dari 300px */
+        background: linear-gradient(
+          135deg,
+          #ff9a9e 0%,
+          #fecfef 50%,
+          #fecfef 100%
+        );
+        border: 4px solid #fff;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #333;
+        opacity: 0;
+        transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 10;
+        padding: 2.5rem; /* Diperbesar dari 2rem */
+      }
+
+      .greeting-card.show {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+      }
+
+      .card-title {
+        font-size: 2.5rem; /* Diperbesar dari 2rem */
+        font-weight: bold;
+        margin-bottom: 2rem; /* Diperbesar dari 1.5rem */
+        color: #d63384;
+        opacity: 0;
+        animation: fadeInText 0.5s ease-out forwards;
+        animation-delay: 0.5s;
+      }
+
+      .typing-text {
+        font-size: 1.1rem; /* Diperbesar dari 1rem */
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 2rem; /* Diperbesar dari 1.5rem */
+        padding: 0 1.5rem; /* Diperbesar dari 1rem */
+        min-height: 150px; /* Diperbesar dari 120px */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        animation: fadeInText 0.5s ease-out forwards;
+        animation-delay: 1s;
+      }
+
+      .typing-cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.2em;
+        background-color: #d63384;
+        margin-left: 2px;
+        animation: blink 1s infinite;
+      }
+
+      .continue-btn {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        color: white;
+        border: none;
+        padding: 15px 30px; /* Diperbesar dari 12px 24px */
+        border-radius: 30px; /* Diperbesar dari 25px */
+        font-size: 1.1rem; /* Diperbesar dari 1rem */
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        opacity: 0;
+        animation: fadeInText 0.5s ease-out forwards;
+        animation-delay: 1.5s;
+      }
+
+      .continue-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+      }
+
+      /* Scratch Card Styles */
+      .scratch-card {
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        background: white;
+        border: 3px solid #ddd;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        opacity: 0;
+        transform: scale(0) rotate(0deg);
+        transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      .scratch-card.show {
+        opacity: 1;
+        transform: scale(1) rotate(3deg);
+      }
+
+      .scratch-card:nth-child(4) {
+        top: -150px;
+        left: -350px;
+        border-color: #ff6b6b;
+      }
+
+      .scratch-card:nth-child(5) {
+        top: -150px;
+        right: -350px;
+        border-color: #4ecdc4;
+      }
+
+      .scratch-card.show:nth-child(4) {
+        transform: scale(1) rotate(-3deg);
+      }
+
+      .scratch-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #ffd700, #ffed4a);
+        color: #333;
+        font-weight: bold;
+        text-align: center;
+        padding: 0.8rem;
+      }
+
+      .prize-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #d63384;
+        line-height: 1.2;
+      }
+
+      .prize-item {
+        font-size: 0.85rem;
+        margin: 0.15rem 0;
+        line-height: 1.3;
+      }
+
+      .whatsapp-btn {
+        background: #25d366;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 18px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 0.4rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        line-height: 1.2;
+      }
+
+      .whatsapp-btn:hover {
+        background: #20ba5a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+      }
+
+      .instruction {
+        font-size: 0.75rem;
+        color: #666;
+        margin-bottom: 0.4rem;
+        line-height: 1.2;
+      }
+
+      .scratch-area {
+        position: relative;
+        width: 260px;
+        height: 100px;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        cursor: pointer;
+        overflow: hidden;
+        margin: 0.8rem 0;
+      }
+
+      .scratch-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #c0c0c0, #e0e0e0);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        color: #666;
+        font-size: 0.9rem;
+        transition: opacity 0.3s ease;
+        z-index: 5;
+      }
+
+      .scratch-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #ffd700, #ffed4a);
+        color: #333;
+        font-weight: bold;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .prize-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.6rem;
+        color: #d63384;
+      }
+
+      .prize-item {
+        font-size: 0.9rem;
+        margin: 0.2rem 0;
+      }
+
+      .whatsapp-btn {
+        background: #25d366;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .whatsapp-btn:hover {
+        background: #20ba5a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+      }
+
+      .instruction {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+
+      .hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #ffd700;
+        border-radius: 50%;
+        opacity: 0;
+        animation: sparkle 2s infinite;
+      }
+
+      .hearts {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .heart {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        opacity: 0;
+        animation: floatHearts 3s infinite;
+      }
+
+      .heart::before,
+      .heart::after {
+        content: "";
+        width: 12px;
+        height: 19px;
+        position: absolute;
+        left: 10px;
+        transform: rotate(-45deg);
+        transform-origin: 0 100%;
+        border-radius: 12px 12px 0 0;
+        background: #ff69b4;
+      }
+
+      .heart::after {
+        left: 0;
+        transform: rotate(45deg);
+        transform-origin: 100% 100%;
+      }
+
+      .step-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        color: white;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+      }
+
+      .scratched {
+        pointer-events: none;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes sparkle {
+        0% {
+          opacity: 0;
+          transform: translateY(0) scale(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(-50px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-100px) scale(0);
+        }
+      }
+
+      @keyframes cardFlip {
+        0% {
+          transform: translateX(-50%) rotateY(0deg) scale(0);
+        }
+        50% {
+          transform: translateX(-50%) rotateY(90deg) scale(1);
+        }
+        100% {
+          transform: translateX(-50%) rotateY(0deg) scale(1);
+        }
+      }
+
+      @keyframes floatHearts {
+        0% {
+          opacity: 0;
+          transform: translateY(0) scale(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(-100px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-200px) scale(0);
+        }
+      }
+
+      @keyframes fadeInText {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="particles" id="particles"></div>
+    <div class="hearts" id="hearts"></div>
+
+    <div class="step-indicator">
+      <div id="stepText">Step 1: Buka Amplop</div>
+    </div>
+
+    <div class="container">
+      <div class="envelope" id="envelope">
+        <div class="envelope-body"></div>
+        <div class="envelope-flap"></div>
+
+        <!-- Greeting Card -->
+        <div class="greeting-card" id="greetingCard">
+          <div class="card-title">21 Sunni Birthday</div>
+          <div class="typing-text" id="typingText">
+            <span id="typingContent"></span><span class="typing-cursor"></span>
+          </div>
+          <button class="continue-btn" onclick="showScratchCards()">
+            Lanjut ke Hadiah
+          </button>
+        </div>
+
+        <!-- Scratch Card 1 - Jaket Uniqlo -->
+        <div class="scratch-card" id="scratchCard1">
+          <div class="instruction">
+            Gosok area di bawah untuk melihat hadiah!
+          </div>
+          <div
+            class="scratch-area"
+            onmousedown="startScratch(1)"
+            onmousemove="scratch(1, event)"
+            onmouseup="endScratch(1)"
+            ontouchstart="startScratch(1)"
+            ontouchmove="scratch(1, event)"
+            ontouchend="endScratch(1)"
+          >
+            <div class="scratch-overlay" id="overlay1">
+              <span> GOSOK DISINI </span>
+            </div>
+            <div class="scratch-content">
+              <div class="prize-item">Jaket Uniqlo Airism</div>
+              <a
+                href="https://wa.me/6281221778278?text=Halo%20%21%20Ami%2C%20aku%20mau%20nagih%20voucher%2C%20Makasih%20Ami"
+                class="whatsapp-btn"
+                target="_blank"
+                >Klaim Voucher</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Scratch Card 2 - Lunch Osteria Gia -->
+        <div class="scratch-card" id="scratchCard2">
+          <div class="instruction">
+            Gosok area di bawah untuk melihat hadiah!
+          </div>
+          <div
+            class="scratch-area"
+            onmousedown="startScratch(2)"
+            onmousemove="scratch(2, event)"
+            onmouseup="endScratch(2)"
+            ontouchstart="startScratch(2)"
+            ontouchmove="scratch(2, event)"
+            ontouchend="endScratch(2)"
+          >
+            <div class="scratch-overlay" id="overlay2">
+              <span> GOSOK DISINI </span>
+            </div>
+            <div class="scratch-content">
+              <div class="prize-item">Lunch or Dinner di Osteria Gia</div>
+              <a
+                href="https://wa.me/6281221778278?text=Halo%20%21%20Ami%2C%20aku%20mau%20nagih%20voucher%2C%20Makasih%20Ami"
+                class="whatsapp-btn"
+                target="_blank"
+                >Klaim Voucher</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="open-text" id="openText">
+        Klik "OPEN ME" untuk membuka surprise!
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 1;
+      let envelopeOpened = false;
+      let cardShown = false;
+      let audio = null; // Add audio variable
+      let scratchStates = {
+        1: { isScratching: false, scratchProgress: 0, isRevealed: false },
+        2: { isScratching: false, scratchProgress: 0, isRevealed: false },
+      };
+
+      // Create particles effect
+      function createParticles() {
+        const particlesContainer = document.getElementById("particles");
+        for (let i = 0; i < 15; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.animationDelay = Math.random() * 2 + "s";
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      // Create floating hearts
+      function createHearts() {
+        const heartsContainer = document.getElementById("hearts");
+        for (let i = 0; i < 8; i++) {
+          const heart = document.createElement("div");
+          heart.className = "heart";
+          heart.style.left = Math.random() * 100 + "%";
+          heart.style.animationDelay = Math.random() * 3 + "s";
+          heartsContainer.appendChild(heart);
+        }
+      }
+
+      // Update step indicator
+      function updateStep(step, text) {
+        currentStep = step;
+        document.getElementById(
+          "stepText"
+        ).textContent = `Step ${step}: ${text}`;
+      }
+
+      // Typing animation function
+      function typeText(text, elementId, speed = 50) {
+        const element = document.getElementById(elementId);
+        let i = 0;
+        element.textContent = "";
+
+        function type() {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+          }
+        }
+        type();
+      }
+
+      // Open envelope and show greeting card
+      function openEnvelope() {
+        if (envelopeOpened) return;
+
+        envelopeOpened = true;
+        const envelope = document.getElementById("envelope");
+        const openText = document.getElementById("openText");
+        const greetingCard = document.getElementById("greetingCard");
+
+        // Play birthday music
+        if (!audio) {
+          audio = new Audio("Happy Birthday Mambo - E's Jammy Jams.mp3");
+          audio.volume = 0.7; // Set volume to 70%
+        }
+        audio.play().catch((e) => console.log("Audio play failed:", e));
+
+        envelope.classList.add("opened");
+        openText.classList.add("hidden");
+
+        updateStep(2, "Baca Greeting Card");
+
+        // Show greeting card with animation
+        setTimeout(() => {
+          greetingCard.classList.add("show");
+          greetingCard.style.animation = "cardFlip 1.2s ease-out";
+          createHearts();
+
+          // Start typing animation after card appears
+          setTimeout(() => {
+            const message =
+              "Happy Birthday Sunni , ciee udah legal plus makin tuaa dari aku. semoga panjang umur, dan sehat selalu. sukses terus buat kamu, untuk hadiahnya ambil vouchernya yaaa. Sekali lagi happy birthday sunni yang ke 21 doaku selalu menyertai kamu";
+            typeText(message, "typingContent", 30);
+          }, 1200);
+        }, 800);
+      }
+
+      // Show scratch cards after greeting card
+      function showScratchCards() {
+        if (cardShown) return;
+
+        cardShown = true;
+        const greetingCard = document.getElementById("greetingCard");
+        const scratchCard1 = document.getElementById("scratchCard1");
+        const scratchCard2 = document.getElementById("scratchCard2");
+
+        updateStep(3, "Gosok untuk Melihat Hadiah");
+
+        // Hide greeting card
+        greetingCard.style.transform = "translateX(-50%) scale(0)";
+        greetingCard.style.opacity = "0";
+
+        // Show scratch cards with staggered animation
+        setTimeout(() => {
+          scratchCard1.classList.add("show");
+        }, 600);
+
+        setTimeout(() => {
+          scratchCard2.classList.add("show");
+        }, 1000);
+
+        createCelebrationEffect();
+      }
+
+      // Scratch functionality
+      function startScratch(cardNumber) {
+        if (scratchStates[cardNumber].isRevealed) return;
+        scratchStates[cardNumber].isScratching = true;
+      }
+
+      function scratch(cardNumber, event) {
+        if (
+          !scratchStates[cardNumber].isScratching ||
+          scratchStates[cardNumber].isRevealed
+        )
+          return;
+
+        event.preventDefault();
+
+        const overlay = document.getElementById(`overlay${cardNumber}`);
+        scratchStates[cardNumber].scratchProgress += 2;
+
+        // Create scratch effect by reducing opacity gradually
+        const progress = Math.min(
+          scratchStates[cardNumber].scratchProgress,
+          100
+        );
+        overlay.style.opacity = Math.max(0, (100 - progress) / 100);
+
+        // Add scratch particles at mouse/touch position
+        createScratchParticles(event, cardNumber);
+
+        // Fully reveal when 80% scratched
+        if (progress >= 80 && !scratchStates[cardNumber].isRevealed) {
+          revealPrize(cardNumber);
+        }
+      }
+
+      function endScratch(cardNumber) {
+        scratchStates[cardNumber].isScratching = false;
+      }
+
+      function createScratchParticles(event, cardNumber) {
+        const scratchArea = event.currentTarget;
+        const rect = scratchArea.getBoundingClientRect();
+        const x = (event.clientX || event.touches[0].clientX) - rect.left;
+        const y = (event.clientY || event.touches[0].clientY) - rect.top;
+
+        for (let i = 0; i < 3; i++) {
+          const particle = document.createElement("div");
+          particle.style.position = "absolute";
+          particle.style.left = x + "px";
+          particle.style.top = y + "px";
+          particle.style.width = "4px";
+          particle.style.height = "4px";
+          particle.style.background = "#c0c0c0";
+          particle.style.borderRadius = "50%";
+          particle.style.pointerEvents = "none";
+          particle.style.animation = "sparkle 0.5s ease-out forwards";
+          scratchArea.appendChild(particle);
+
+          setTimeout(() => {
+            particle.remove();
+          }, 500);
+        }
+      }
+
+      function revealPrize(cardNumber) {
+        scratchStates[cardNumber].isRevealed = true;
+        const overlay = document.getElementById(`overlay${cardNumber}`);
+        const scratchCard = document.getElementById(`scratchCard${cardNumber}`);
+
+        overlay.style.opacity = "0";
+        overlay.style.pointerEvents = "none";
+
+        // Add revealed effect
+        scratchCard.style.boxShadow = "0 15px 40px rgba(255, 215, 0, 0.4)";
+
+        // Create celebration effect
+        createScratchCelebration(scratchCard);
+
+        updateStep(4, "Klaim Hadiah via WhatsApp");
+      }
+
+      function createScratchCelebration(card) {
+        for (let i = 0; i < 15; i++) {
+          const confetti = document.createElement("div");
+          confetti.style.position = "absolute";
+          confetti.style.width = "8px";
+          confetti.style.height = "8px";
+          confetti.style.background = [
+            "#ff6b6b",
+            "#ffd700",
+            "#4ecdc4",
+            "#ff69b4",
+          ][Math.floor(Math.random() * 4)];
+          confetti.style.left = Math.random() * 320 + "px";
+          confetti.style.top = Math.random() * 220 + "px";
+          confetti.style.borderRadius = "50%";
+          confetti.style.opacity = "1";
+          confetti.style.animation = `sparkle ${
+            1 + Math.random()
+          }s ease-out forwards`;
+          confetti.style.pointerEvents = "none";
+          card.appendChild(confetti);
+
+          setTimeout(() => {
+            confetti.remove();
+          }, 2000);
+        }
+      }
+
+      // Create celebration effect
+      function createCelebrationEffect() {
+        const container = document.querySelector(".container");
+        for (let i = 0; i < 20; i++) {
+          const confetti = document.createElement("div");
+          confetti.style.position = "absolute";
+          confetti.style.width = "8px";
+          confetti.style.height = "8px";
+          confetti.style.background = [
+            "#ff6b6b",
+            "#4ecdc4",
+            "#45b7d1",
+            "#ffd700",
+            "#ff8e8e",
+          ][Math.floor(Math.random() * 5)];
+          confetti.style.left = Math.random() * 100 + "%";
+          confetti.style.top = "0%";
+          confetti.style.opacity = "1";
+          confetti.style.animation = `sparkle ${
+            1 + Math.random()
+          }s ease-out forwards`;
+          container.appendChild(confetti);
+
+          setTimeout(() => {
+            confetti.remove();
+          }, 2000);
+        }
+      }
+
+      // Event listeners
+      document
+        .getElementById("envelope")
+        .addEventListener("click", openEnvelope);
+      document
+        .getElementById("openText")
+        .addEventListener("click", openEnvelope);
+
+      // Initialize
+      createParticles();
+
+      // Add floating animation to envelope
+      function floatEnvelope() {
+        const envelope = document.getElementById("envelope");
+        if (!envelopeOpened) {
+          envelope.style.transform =
+            "translateY(" + Math.sin(Date.now() * 0.002) * 10 + "px) scale(1)";
+        }
+        requestAnimationFrame(floatEnvelope);
+      }
+      floatEnvelope();
+
+      // Prevent context menu on scratch areas
+      document.addEventListener("contextmenu", function (e) {
+        if (e.target.closest(".scratch-area")) {
+          e.preventDefault();
+        }
+      });
+    </script>
+  </body>
+</html>
